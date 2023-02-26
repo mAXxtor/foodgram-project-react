@@ -46,7 +46,9 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ('name',)
-        #Требуется ли проверка уникальности? UniqueConstrant?
+        constraints = [models.UniqueConstraint(fields=[
+            'name', 'measurement_unit'], name='unique_ingredient')
+        ]
         #Требуется ли проверка пустоты?
 
     def __str__(self):
@@ -175,7 +177,9 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('-pub_date',)
-        # Проверить на уникальность для автора? UniqueConstraint?
+        constraints = [models.UniqueConstraint(fields=[
+            'name', 'author'], name='unique_recipe_for_author')
+        ]
 
     def __str__(self):
         return f'{self.name} (Автор: {self.author.username})'
@@ -222,7 +226,9 @@ class IngredientInRecept(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Количество ингредиентов'
         ordering = ('-id', )
-        # Требуется ли проверка на уникальность ингредиента в рецепте? UniqueConstrant?
+        constraints = [models.UniqueConstraint(fields=[
+            'recipe', 'ingredients'], name='unique_ingredient_in_recipe')
+        ]
 
     def __str__(self):
         return f'{self.amount} {self.ingredients} в {self.recipe}'
@@ -263,7 +269,9 @@ class Favorite(models.Model):
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
         ordering = ('-add_date',)
-        # Требуется ли проверка на уникальность рецепта в избранных? UniqueConstrant?
+        constraints = [models.UniqueConstraint(fields=[
+            'recipe', 'user'], name='unique_recipe_in_favorites')
+        ]
 
     def __str__(self):
         return f'{self.recipe} нравится {self.user}'
@@ -304,7 +312,9 @@ class Cart(models.Model):
         verbose_name = 'Рецепт в списке покупок'
         verbose_name_plural = 'Рецепты в списке покупок'
         ordering = ('-add_date',)
-        # Требуется ли проверка на уникальность рецепта в списке? UniqueConstrant?
+        constraints = [models.UniqueConstraint(fields=[
+            'recipe', 'user'], name='unique_recipe_in_cart')
+        ]
 
     def __str__(self):
         return f'{self.recipe} в списке {self.user}'
