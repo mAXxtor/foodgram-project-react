@@ -1,4 +1,4 @@
-"""Модуль для создания, настройки и управления моделями приложения `recipes`.
+""" Модели приложения `recipes`.
 
 Models:
     Ingredient:
@@ -10,20 +10,23 @@ Models:
     Recipe:
         Основная модель, описывающая рецепты.
     IngredientInRecept:
-        Модель для связи Recipe и Ingredient с указанием количества ингредиентов.
+        Модель для связи Recipe и Ingredient с указанием количества
+        ингредиентов.
     Favorite:
-        Модель для связи Recipe и User. Определяет избранные рецепты для пользователя.
+        Модель для связи Recipe и User. Определяет избранные рецепты
+        для пользователя.
     Cart:
-        Модель для связи Recipe и User. Определяет рецепты в списке покупок пользователя.
+        Модель для связи Recipe и User. Определяет рецепты в списке покупок
+        пользователя.
 """
 from colorfield.fields import ColorField
 from django.conf import settings
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
 class Ingredient(models.Model):
-    """Ингредиент для рецептов.
+    """ Ингредиент для рецептов.
 
     Attributes:
         name(str):
@@ -49,16 +52,16 @@ class Ingredient(models.Model):
         constraints = [models.UniqueConstraint(fields=[
             'name', 'measurement_unit'], name='unique_ingredient')
         ]
-        #Требуется ли проверка пустоты?
+        # Требуется ли проверка пустоты?
 
     def __str__(self):
         return f'{self.name} ({self.measurement_unit})'
 
-    #Требуется ли перевод в lower_case? Переопределить def clean?
+    # Требуется ли перевод в lower_case? Переопределить def clean?
 
 
 class Tag(models.Model):
-    """Тег для рецептов.
+    """ Тег для рецептов.
 
     Attributes:
         name(str):
@@ -98,11 +101,11 @@ class Tag(models.Model):
     def __str__(self):
         return f'{self.name} (цвет: {self.color})'
 
-    #Требуется ли перевод в lower_case? Переопределить def clean?
+    # Требуется ли перевод в lower_case? Переопределить def clean?
 
 
 class Recipe(models.Model):
-    """Рецепты.
+    """ Рецепты.
 
     Attributes:
         author(int):
@@ -118,7 +121,8 @@ class Recipe(models.Model):
             Описание рецепта.
         ingredients(int):
             Ингредиенты для рецепта.
-            Связь ManyToMany с моделью Ingredient через модель IngredientInRecept.
+            Связь ManyToMany с моделью Ingredient через
+            модель IngredientInRecept.
         tags(array[int]):
             Список тегов рецепта.
             Связь ManyToMany с моделью Tag.
@@ -138,17 +142,14 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название рецепта',
-        related_name='recipes',
         max_length=settings.MAX_LEN_MODEL_FIELD,
     )
     image = models.ImageField(
         'Изображение рецепта',
-        related_name='recipes',
         upload_to='recipes/',
     )
     text = models.TextField(
         'Описание рецепта',
-        related_name='recipes',
     )
     ingredients = models.ManyToManyField(
         'Ингредиенты для рецепта',
@@ -189,7 +190,7 @@ class Recipe(models.Model):
 
 
 class IngredientInRecept(models.Model):
-    """Количество ингредиентов в рецепте.
+    """ Количество ингредиентов в рецепте.
     Связь моделей Recipe и Ingredient с указанием количества ингредиентов.
 
     Attributes:
@@ -235,7 +236,7 @@ class IngredientInRecept(models.Model):
 
 
 class Favorite(models.Model):
-    """Избранные рецепты.
+    """ Избранные рецепты.
     Связь моделей Recipe и User.
 
     Attributes:
@@ -278,7 +279,7 @@ class Favorite(models.Model):
 
 
 class Cart(models.Model):
-    """Список покупок.
+    """ Список покупок.
     Связь моделей Recipe и User.
 
     Attributes:
