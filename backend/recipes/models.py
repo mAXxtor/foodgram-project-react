@@ -80,13 +80,6 @@ class Tag(models.Model):
         format='hex',
         max_length=settings.MAX_LEN_HEX_FIELD,
         unique=True,
-        # Переписать hex_color_validator?
-        validators=[
-            RegexValidator(
-                regex="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
-            )
-        ],
-        error_messages={'validators': 'Проверьте формат ввода'},
     )
     slug = models.SlugField(
         'Slug тега',
