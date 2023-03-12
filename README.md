@@ -47,7 +47,6 @@ cd backend
 ```
 ALLOWED_HOSTS=*
 SECRET_KEY=5(&%1y_a6-odm+s=1wl_-8lyh%3ldtz7q=!@egrc9i&jz)9$98
-DB_ENGINE=django.db.backends.postgresql
 TEST_DB=True
 ```
 
