@@ -1,0 +1,79 @@
+[
+    {
+        "email": "gsokolov@fake.ru",
+        "username": "gleb.sokolov",
+        "first_name": "Глеб",
+        "last_name": "Соколов",
+        "password": "NI71O3Ubobj@"
+    },
+    {
+        "email": "ttsvetnov@fake.ru",
+        "username": "taras.tsvetnov",
+        "first_name": "Тарас",
+        "last_name": "Цветнов",
+        "password": "DPWv1x2z&5t$"
+    },
+    {
+        "email": "ekoryavina@fake.ru",
+        "username": "elisaveta.koryavina",
+        "first_name": "Елизавета",
+        "last_name": "Корявина",
+        "password": "igSjZ096p4H@"
+    },
+    {
+        "email": "mgagarina@fake.ru",
+        "username": "mira.gagarina",
+        "first_name": "Мира",
+        "last_name": "Гагарина",
+        "password": "3Ya3@04y5^NN"
+    },
+    {
+        "email": "arusnak@fake.ru",
+        "username": "artemiy.rusnak",
+        "first_name": "Артемий",
+        "last_name": "Руснак",
+        "password": "E82KhkmUy22*"
+    },
+    {
+        "email": "mpavlenko@fake.ru",
+        "username": "marfa.pavlenko",
+        "first_name": "Марфа",
+        "last_name": "Павленко",
+        "password": "1n04WQv*t@78"
+    },
+    {
+        "email": "pchekmaryov@fake.ru",
+        "username": "petr.chekmaryov",
+        "first_name": "Петр",
+        "last_name": "Чекмарев",
+        "password": "*jAsfT9*@46C"
+    },
+    {
+        "email": "tbabykin@fake.ru",
+        "username": "timur.babykin",
+        "first_name": "Тимур",
+        "last_name": "Бабыкин",
+        "password": "^vHLZF5e73A7"
+    },
+    {
+        "email": "avinogradova@fake.ru",
+        "username": "anastasiya.vinogradova",
+        "first_name": "Анастасия",
+        "last_name": "Виноградова",
+        "password": "wZ0$YDQs4jQ4"
+    },
+    {
+        "email": "ysolomonova@fake.ru",
+        "username": "yevdokiya.solomonova",
+        "first_name": "Евдокия",
+        "last_name": "Соломонова",
+        "password": "zIv!wi2P47Y6"
+    },
+    {
+        "email": "abelova@fake.ru",
+        "username": "anna.belova",
+        "first_name": "Анна",
+        "last_name": "Белова",
+        "password": "t3SU7f!oB7Xa"
+    }
+]

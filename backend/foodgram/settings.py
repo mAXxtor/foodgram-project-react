@@ -15,7 +15,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.CustomUser'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,8 +25,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_filters',
+    'rest_framework.authtoken',
     'djoser',
+    'django_filters',
     'api',
     'users',
     'recipes',
@@ -84,19 +85,40 @@ else:
     }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME':
+     'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', }, # noqa E501
+    {'NAME':
+     'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    {'NAME':
+     'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    {'NAME':
+     'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+DJOSER = {
+    'SERIALIZERS': {
+        "user": "api.serializers.UserSerializer",
+        "user_create": "api.serializers.UserSerializer",
+        "current_user": "api.serializers.UserSerializer",
+    },
+
+    'PERMISSIONS': {
+        "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
+        "user_list": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+    },
+
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+}
 
 LANGUAGE_CODE = 'ru-RU'
 
@@ -115,6 +137,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MAX_LEN_USER_ATTR = 150
+MAX_LEN_EMAIL = 254
 MAX_LEN_HEX_FIELD = 7
 MAX_LEN_MODEL_FIELD = 200
 MIN_COOKING_TIME = 1

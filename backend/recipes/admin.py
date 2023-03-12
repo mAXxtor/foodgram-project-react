@@ -1,7 +1,7 @@
 """ Модуль для администрирования приложения `recipes`. """
 from django.contrib import admin
 
-from .models import Cart, Favorite, Ingredient, IngredientInRecept, Recipe, Tag
+from .models import Cart, Favorite, Ingredient, IngredientInRecipe, Recipe, Tag
 
 
 @admin.register(Ingredient)
@@ -18,11 +18,11 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug',)
     search_fields = ('name', 'slug',)
     list_filter = ('name',)
-    list_editable = ('slug')
+    list_editable = ('slug',)
 
 
 class IngredientInLine(admin.TabularInline):
-    model = IngredientInRecept
+    model = IngredientInRecipe
     min_num = 1
 
 
@@ -30,16 +30,16 @@ class IngredientInLine(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """ Управление рецептами """
     list_display = (
-        'author', 'name', 'cooking_time', 'slug', 'count_favorites',
+        'author', 'name', 'cooking_time', 'count_favorites',
     )
     search_fields = ('name', 'slug',)
     list_filter = ('name', 'author', 'tags',)
     inlines = (IngredientInLine,)
 
     @admin.display(description='Добавлено в избранное')
-    def count_favorites(self, obj):
+    def count_favorites(self, recipe):
         """ Общее число добавлений рецепта в избранное """
-        return obj.favorites.count()
+        return recipe.favorites.count()
 
 
 @admin.register(Favorite)
@@ -52,5 +52,5 @@ class FavoriteAdmin(admin.ModelAdmin):
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     """ Управление корзиной """
-    list_display = ('recipe', 'user', 'add_date',)
+    list_display = ('recipe', 'user',)
     search_fields = ('recipe ', 'user',)
