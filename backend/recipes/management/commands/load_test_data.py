@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for model, json_file in TABLES.items():
             self.stdout.write(f'Импорт данных из файла {json_file}')
-            with open(f'{settings.BASE_DIR}/data/{json_file}',
+            with open(f'{settings.BASE_DIR}/static/data/{json_file}',
                       encoding='utf-8',) as file:
                 counter = 0
                 test_data = json.loads(file.read())
