@@ -30,7 +30,7 @@ class IngredientInLine(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """ Управление рецептами """
     list_display = (
-        'author', 'name', 'cooking_time', 'count_favorites',
+        'author', 'name', 'cooking_time', 'count_favorites', 'ingredients_list'
     )
     search_fields = ('name', 'slug',)
     list_filter = ('name', 'author', 'tags',)
@@ -45,7 +45,7 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     """ Управление избранным """
-    list_display = ('recipe', 'user', 'add_date',)
+    list_display = ('recipe', 'user',)
     search_fields = ('recipe ', 'user',)
 
 
