@@ -140,5 +140,5 @@ dmypy.json
 .vscode/
 *.code-workspace
 
-# Директория со статикой и медиа
-media/
+# Директория с медиа
+*/media/
