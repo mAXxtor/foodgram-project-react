@@ -31,6 +31,11 @@ class RecipeFilter(FilterSet):
         return queryset
 
 
+# Из за ограничений SQlite не поддерживается order_by в связке
+# с union в субзапросах
+# https://stackoverflow.com/questions/65577792/error-order-by-not-allowed-in-subqueries-of-compound-statements-in-django-whi
+# Получилось победить убрав сортировку в модели Ingredient
+# На PostgreSQL фильтр работает с сортировкой в Модели.
 class IngredientFilter(FilterSet):
     """ Фильтр для Ingredient.
         Поиск по полю name регистронезависимо:
