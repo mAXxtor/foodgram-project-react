@@ -201,7 +201,7 @@ class IngredientInRecipe(models.Model):
         to=Recipe,
         on_delete=models.CASCADE,
     )
-    ingredients = models.ForeignKey(
+    ingredient = models.ForeignKey(
         verbose_name='Связанные ингредиенты',
         related_name='recipe',
         to=Ingredient,
@@ -219,11 +219,11 @@ class IngredientInRecipe(models.Model):
         verbose_name_plural = 'Количество ингредиентов'
         ordering = ('-id', )
         constraints = [models.UniqueConstraint(fields=[
-            'recipe', 'ingredients'], name='unique_ingredient_in_recipe')
+            'recipe', 'ingredient'], name='unique_ingredient_in_recipe')
         ]
 
     def __str__(self):
-        return f'{self.amount} {self.ingredients} в {self.recipe}'
+        return f'{self.amount} {self.ingredient} в {self.recipe}'
 
 
 class FavoriteCartAbstractModel(models.Model):
@@ -243,6 +243,9 @@ class FavoriteCartAbstractModel(models.Model):
         abstract = True
         ordering = ('recipe',)
 
+    def __str__(self):
+        return f'{self.recipe} в списке {self.user}'
+
 
 class Favorite(FavoriteCartAbstractModel):
     """ Избранные рецепты.
@@ -256,7 +259,7 @@ class Favorite(FavoriteCartAbstractModel):
             Пользователь.
             Связь ForeignKey с моделью User.
     """
-    class Meta:
+    class Meta(FavoriteCartAbstractModel.Meta):
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
         default_related_name = 'favorites'
@@ -264,9 +267,6 @@ class Favorite(FavoriteCartAbstractModel):
             fields=['recipe', 'user'],
             name='unique_recipe_in_favorites')
         ]
-
-    def __str__(self):
-        return f'{self.recipe} нравится {self.user}'
 
 
 class Cart(FavoriteCartAbstractModel):
@@ -283,7 +283,7 @@ class Cart(FavoriteCartAbstractModel):
         add_date(datetime):
             Дата добавления в список покупок.
     """
-    class Meta:
+    class Meta(FavoriteCartAbstractModel.Meta):
         verbose_name = 'Рецепт в списке покупок'
         verbose_name_plural = 'Рецепты в списке покупок'
         default_related_name = 'carts'
@@ -291,6 +291,3 @@ class Cart(FavoriteCartAbstractModel):
             fields=['recipe', 'user'],
             name='unique_recipe_in_cart')
         ]
-
-    def __str__(self):
-        return f'{self.recipe} в списке {self.user}'

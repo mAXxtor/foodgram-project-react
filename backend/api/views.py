@@ -137,18 +137,11 @@ class RecipeViewSet(ModelViewSet):
     @staticmethod
     def delete_obj(model, request, pk):
         """ Удаляет рецепт из списка покупок или избранного. """
-        obj = model.objects.filter(
-            user=request.user, recipe=get_object_or_404(Recipe, id=pk))
-        if model == Cart:
-            error_message = 'в список покупок'
-        else:
-            error_message = 'в избранное'
-        if not obj.exists():
-            return Response(
-                {'errors': f'Рецепт не был добавлен {error_message}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        obj.delete()
+        get_object_or_404(
+            model,
+            user=request.user,
+            recipe=get_object_or_404(Recipe, id=pk)
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(

@@ -35,7 +35,8 @@ class UserSerializer(ModelSerializer):
         """ Проверка подписки пользователя. """
         request = self.context.get('request')
         return (
-            request.user.is_authenticated
+            request is not None
+            and request.user.is_authenticated
             and obj.follower.filter(user=request.user).exists()
         )
 
@@ -87,8 +88,8 @@ class IngredientSerializer(ModelSerializer):
         read_only_fields = '__all__',
 
 
-class IngredientInRecipeSerializer(ModelSerializer):
-    """ Сериализатор связи ингридиентов и рецепта """
+class IngredientInRecipeReadSerializer(ModelSerializer):
+    """ Сериализатор для просмотра ингридиентов в рецепте. """
     id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
@@ -96,6 +97,15 @@ class IngredientInRecipeSerializer(ModelSerializer):
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount',)
+
+
+class IngredientInRecipeCreateSerializer(ModelSerializer):
+    """ Сериализатор добавления ингридиентов для рецепта. """
+    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+
+    class Meta:
+        model = IngredientInRecipe
+        fields = ('id', 'amount',)
 
 
 class RecipeBaseSerializer(ModelSerializer):
@@ -111,7 +121,7 @@ class RecipeBaseSerializer(ModelSerializer):
 class RecipeReadSerializer(RecipeBaseSerializer):
     """ Сериализатор для чтения рецептов. """
     tags = TagSerializer(many=True)
-    ingredients = IngredientInRecipeSerializer(many=True, source='ingredient')
+    ingredients = SerializerMethodField()
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
 
@@ -123,14 +133,15 @@ class RecipeReadSerializer(RecipeBaseSerializer):
 
     def get_ingredients(self, recipe):
         """ Получает список ингридиентов для рецепта. """
-        ingredients = recipe.ingredients.filter(recipe=recipe)
-        return IngredientInRecipeSerializer(ingredients, many=True).data
+        ingredients = IngredientInRecipe.objects.filter(recipe=recipe)
+        return IngredientInRecipeReadSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, recipe):
         """ Рецепт в избранном. """
         request = self.context.get('request')
         return (
-            request.user.is_authenticated
+            request is not None
+            and request.user.is_authenticated
             and recipe.favorites.filter(user=request.user).exists()
         )
 
@@ -138,7 +149,8 @@ class RecipeReadSerializer(RecipeBaseSerializer):
         """ Рецепт в списке покупок. """
         request = self.context.get('request')
         return (
-            request.user.is_authenticated
+            request is not None
+            and request.user.is_authenticated
             and recipe.carts.filter(user=request.user).exists()
         )
 
@@ -150,7 +162,7 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
         queryset=Tag.objects.all(),
         error_messages={'does_not_exist': 'Указанного тега не существует'}
     )
-    ingredients = IngredientInRecipeSerializer(many=True)
+    ingredients = IngredientInRecipeCreateSerializer(many=True)
 
     class Meta(RecipeBaseSerializer.Meta):
         fields = (
@@ -191,7 +203,7 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
             ingredients_list.append(ingredient)
 
         # валидация Сooking_time
-        if self.initial_data.get('cooking_time') < settings.MIN_COOKING_TIME:
+        if data.get('cooking_time') < settings.MIN_COOKING_TIME:
             raise ValidationError(
                 {'cooking_time':
                  'Время приготовления должно быть больше 1 минуты'})
@@ -200,14 +212,15 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
     @staticmethod
     def create_ingredients(recipe, ingredients):
         """ Создает связи Ingredient и Recipe. """
+        ingredients.sort(key=lambda item: item['id'].name)
+        ingredients.reverse()
         IngredientInRecipe.objects.bulk_create([
             IngredientInRecipe(
                 recipe=recipe,
-                ingredients=ingredient.pop('id'),
+                ingredient=ingredient.pop('id'),
                 amount=ingredient.pop('amount')
-            ) for ingredient in ingredients.sort(
-                key=lambda item: item['id'].name)]
-        )
+            ) for ingredient in ingredients
+        ])
 
     def create(self, validated_data):
         """ Создает рецепт. """
@@ -217,7 +230,8 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
         if request.user.recipes.filter(
             name=validated_data.get('name')
         ).exists():
-            raise ValidationError('Вы уже добавляли рецепт с таким именем')
+            raise ValidationError(
+                {'recipe': 'Вы уже добавляли рецепт с таким именем'})
         recipe = Recipe.objects.create(author=request.user, **validated_data)
         recipe.tags.set(tags)
         self.create_ingredients(recipe, ingredients)
