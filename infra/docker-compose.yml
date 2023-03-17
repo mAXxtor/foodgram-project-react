@@ -8,7 +8,7 @@ services:
     env_file:
       - ./.env
   backend:
-    image: maxxtor/foodgram
+    image: maxxtor/foodgram:v1.10
     restart: always
     volumes:
       - static_value:/app/static/
