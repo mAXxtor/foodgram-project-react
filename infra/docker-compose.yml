@@ -5,8 +5,13 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - db_value:/var/lib/postgresql/data/
+    expose:
+      - "5433"
+    ports:
+    - "5433:5433"
     env_file:
       - ./.env
+    command: -p 5433
   backend:
     image: maxxtor/foodgram:v1.10
     restart: always
