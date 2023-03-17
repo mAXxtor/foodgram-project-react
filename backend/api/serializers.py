@@ -102,6 +102,7 @@ class IngredientInRecipeReadSerializer(ModelSerializer):
 class IngredientInRecipeCreateSerializer(ModelSerializer):
     """ Сериализатор добавления ингридиентов для рецепта. """
     id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = IntegerField(write_only=True)
 
     class Meta:
         model = IngredientInRecipe
@@ -203,7 +204,7 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
             ingredients_list.append(ingredient)
 
         # валидация Сooking_time
-        if data.get('cooking_time') < settings.MIN_COOKING_TIME:
+        if int(data.get('cooking_time')) < settings.MIN_COOKING_TIME:
             raise ValidationError(
                 {'cooking_time':
                  'Время приготовления должно быть больше 1 минуты'})
@@ -212,15 +213,13 @@ class RecipeCreateSerializer(RecipeBaseSerializer):
     @staticmethod
     def create_ingredients(recipe, ingredients):
         """ Создает связи Ingredient и Recipe. """
-        ingredients.sort(key=lambda item: item['id'].name)
-        ingredients.reverse()
         IngredientInRecipe.objects.bulk_create([
             IngredientInRecipe(
                 recipe=recipe,
                 ingredient=ingredient.pop('id'),
                 amount=ingredient.pop('amount')
             ) for ingredient in ingredients
-        ])
+        ]).sort(key=(lambda item: item.ingredient.name), reverse=True)
 
     def create(self, validated_data):
         """ Создает рецепт. """
