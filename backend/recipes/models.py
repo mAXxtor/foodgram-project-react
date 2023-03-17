@@ -48,7 +48,8 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ('name',)
+        # ordering = ('name',) Закомментировал из-за проблем
+        # с SQlite по фильтрации
         constraints = [models.UniqueConstraint(fields=[
             'name', 'measurement_unit'], name='unique_unit_for_ingredient')
         ]
@@ -124,9 +125,6 @@ class Recipe(models.Model):
         cooking_time(int):
             Время приготовления рецепта.
             Ограничение по минимальному значению (1).
-        pub_date(datetime):
-            Дата добавления рецепта.
-            Присваивается автоматически.
     """
     author = models.ForeignKey(
         verbose_name='Автор рецепта',
@@ -164,18 +162,19 @@ class Recipe(models.Model):
                         'Минимальное время приготовления 1 минута'},
         default=1,
     )
-    pub_date = models.DateTimeField(
-        'Дата добавления рецепта',
-        auto_now_add=True,
-    )
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-pub_date',)
+        ordering = ('name',)
         constraints = [models.UniqueConstraint(fields=[
             'name', 'author'], name='unique_recipe_for_author')
         ]
+
+    def ingredients_list(self):
+        return ' %s' % (', '.join(
+            [ingredient.name for ingredient in self.ingredients.all()]))
+    ingredients_list.short_description = 'Список ингредиентов'
 
     def __str__(self):
         return f'{self.name} (Автор: {self.author.username})'
@@ -202,7 +201,7 @@ class IngredientInRecipe(models.Model):
         to=Recipe,
         on_delete=models.CASCADE,
     )
-    ingredients = models.ForeignKey(
+    ingredient = models.ForeignKey(
         verbose_name='Связанные ингредиенты',
         related_name='recipe',
         to=Ingredient,
@@ -220,14 +219,35 @@ class IngredientInRecipe(models.Model):
         verbose_name_plural = 'Количество ингредиентов'
         ordering = ('-id', )
         constraints = [models.UniqueConstraint(fields=[
-            'recipe', 'ingredients'], name='unique_ingredient_in_recipe')
+            'recipe', 'ingredient'], name='unique_ingredient_in_recipe')
         ]
 
     def __str__(self):
-        return f'{self.amount} {self.ingredients} в {self.recipe}'
+        return f'{self.amount} {self.ingredient} в {self.recipe}'
 
 
-class Favorite(models.Model):
+class FavoriteCartAbstractModel(models.Model):
+    """ Абстрактная модель для Favorite и Cart. """
+    recipe = models.ForeignKey(
+        verbose_name='Рецепт',
+        to=Recipe,
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        verbose_name='Пользователь',
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        abstract = True
+        ordering = ('recipe',)
+
+    def __str__(self):
+        return f'{self.recipe} в списке {self.user}'
+
+
+class Favorite(FavoriteCartAbstractModel):
     """ Избранные рецепты.
     Связь моделей Recipe и User.
 
@@ -238,40 +258,18 @@ class Favorite(models.Model):
         user(int):
             Пользователь.
             Связь ForeignKey с моделью User.
-        add_date(datetime):
-            Дата добавления в избранное.
     """
-    recipe = models.ForeignKey(
-        verbose_name='Избранный рецепт',
-        related_name='favorites',
-        to=Recipe,
-        on_delete=models.CASCADE,
-    )
-    user = models.ForeignKey(
-        verbose_name='Пользователь',
-        related_name='favorites',
-        to=settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-    add_date = models.DateTimeField(
-        'Дата добавления в избранное',
-        auto_now_add=True,
-    )
-
-    class Meta:
+    class Meta(FavoriteCartAbstractModel.Meta):
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
-        ordering = ('-add_date',)
+        default_related_name = 'favorites'
         constraints = [models.UniqueConstraint(
             fields=['recipe', 'user'],
             name='unique_recipe_in_favorites')
         ]
 
-    def __str__(self):
-        return f'{self.recipe} нравится {self.user}'
 
-
-class Cart(models.Model):
+class Cart(FavoriteCartAbstractModel):
     """ Список покупок.
     Связь моделей Recipe и User.
 
@@ -285,27 +283,11 @@ class Cart(models.Model):
         add_date(datetime):
             Дата добавления в список покупок.
     """
-    recipe = models.ForeignKey(
-        verbose_name='Рецепты в списке покупок',
-        related_name='carts',
-        to=Recipe,
-        on_delete=models.CASCADE,
-    )
-    user = models.ForeignKey(
-        verbose_name='Пользователь',
-        related_name='carts',
-        to=settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
+    class Meta(FavoriteCartAbstractModel.Meta):
         verbose_name = 'Рецепт в списке покупок'
         verbose_name_plural = 'Рецепты в списке покупок'
-        ordering = ('-id',)
+        default_related_name = 'carts'
         constraints = [models.UniqueConstraint(
             fields=['recipe', 'user'],
             name='unique_recipe_in_cart')
         ]
-
-    def __str__(self):
-        return f'{self.recipe} в списке {self.user}'
