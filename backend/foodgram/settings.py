@@ -80,7 +80,7 @@ else:
             'USER': os.getenv('POSTGRES_USER', default='foodgram'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='1105'),
             'HOST': os.getenv('DB_HOST', default='localhost'),
-            'PORT': os.getenv('DB_PORT', default=5432)
+            'PORT': os.getenv('DB_PORT', default=5433)
         }
     }
 
