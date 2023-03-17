@@ -56,11 +56,13 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
+        # key: ${{ secrets.SSH_KEY }}
+        # passphrase: ${{ secrets.PASSPHRASE }}
+        password: ${{ secrets.USER_PASSWORD }}
         script: |
           sudo docker-compose stop
           sudo docker-compose rm backend
+          cd ../foodgram/
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
