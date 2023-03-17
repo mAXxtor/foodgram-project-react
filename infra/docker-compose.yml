@@ -27,7 +27,7 @@ services:
   frontend:
     image: maxxtor/foodgram_frontend
     volumes:
-      - ../frontend/:/app/result_build/
+      - ./frontend/:/app/result_build/
     depends_on:
       - db
 
@@ -41,7 +41,7 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-      - ../frontend/build:/usr/share/nginx/html/
+      - ./frontend/build:/usr/share/nginx/html/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
