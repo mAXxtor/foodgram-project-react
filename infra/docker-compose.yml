@@ -30,6 +30,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - db
 
   nginx:
     image: nginx:1.21.3-alpine
@@ -43,8 +45,10 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
+      - frontend
 
 volumes:
+  result_build:
   static_value:
   media_value:
   db_value:
