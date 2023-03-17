@@ -1,6 +1,7 @@
 from django.db.models import IntegerField, Value
 from django_filters.rest_framework import (BooleanFilter, CharFilter,
                                            FilterSet, filters)
+# noqa I004
 from recipes.models import Ingredient, Recipe, Tag
 
 

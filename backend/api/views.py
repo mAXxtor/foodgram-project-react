@@ -109,9 +109,9 @@ class RecipeViewSet(ModelViewSet):
         return response
 
     @action(
-            detail=False,
-            methods=['GET'],
-            permission_classes=(IsAuthenticated,)
+        detail=False,
+        methods=['GET'],
+        permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         """ Скачивает список покупок. """

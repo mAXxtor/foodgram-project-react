@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+# noqa I004
 from recipes.models import Ingredient, Tag
 
 TABLES = {
@@ -27,4 +28,4 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(
                         f'{element} уже загружен'))
             self.stdout.write(self.style.SUCCESS(
-                        f'- загружено {counter} записей'))
+                f'- загружено {counter} записей'))
