@@ -25,9 +25,7 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: maxxtor/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
