@@ -57,7 +57,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         privateKey: ${{ secrets.SSH_KEY }}
-        password: ${{ secrets.PASSPHRASE }}
+        passphrase: ${{ secrets.PASSPHRASE }}
         command: |
           cd foodgram/
           rm -f .env
