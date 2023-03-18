@@ -104,8 +104,8 @@ class RecipeViewSet(ModelViewSet):
         shopping_list.append('\nFoodgram - продуктовый помощник ')
         file = 'shopping_list.txt'
         response = HttpResponse(shopping_list,
-                                content_type='text.txt; charset=utf8')
-        response['Content-Disposition'] = f'attachment; filename="{file}"'
+                                content_type='text/plain; charset=utf8')
+        response['Content-Disposition'] = f'attachment; filename={file}'
         return response
 
     @action(
