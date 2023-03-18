@@ -52,14 +52,14 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
     - name: executing remote ssh commands to deploy
-      uses: garygrossgarten/github-action-ssh@release
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
-        privateKey: ${{ secrets.SSH_KEY }}
-        password: ${{ secrets.PASSPHRASE }}
-        command: |
-          cd foodgram/
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+          cd foodgram
           rm -f .env
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
