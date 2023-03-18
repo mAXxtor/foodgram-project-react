@@ -61,9 +61,10 @@ jobs:
         script: |
           set -m
           cd foodgram
-          rm -f .env
-          touch .env
-          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          sudo rm -f .env
+          sudo touch .env
+          sudo chmod 666 .env
+          sudo echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
