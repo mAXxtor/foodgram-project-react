@@ -44,7 +44,7 @@ class UserSerializer(ModelSerializer):
 class UserSubscribeSerializer(UserSerializer):
     """ Сериализатор для вывода подписок. """
     recipes_count = SerializerMethodField()
-    recipes = RecipeMinifiedSerializer(many=True, read_only=True)
+    recipes = SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
@@ -70,6 +70,18 @@ class UserSubscribeSerializer(UserSerializer):
     def get_recipes_count(self, user):
         """ Считает количество рецептов у автора. """
         return user.recipes.count()
+
+    def get_recipes(self, author):
+        request = self.context.get('request')
+        if request is None:
+            return False
+        limit = request.query_params.get('recipes_limit')
+        print(limit)
+        recipes = author.recipes.all()
+        if limit:
+            recipes = recipes[:int(limit)]
+        return RecipeMinifiedSerializer(
+            recipes, read_only=True, many=True).data
 
 
 class TagSerializer(ModelSerializer):
