@@ -57,7 +57,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         privateKey: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
+        password: ${{ secrets.PASSPHRASE }}
         command: |
           cd foodgram/
           rm -f .env
@@ -73,7 +73,7 @@ jobs:
           echo DEBUG_MODE=${{ secrets.DEBUG_MODE }} >> .env
           echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
           sudo docker-compose stop
-          sudo docker-compose rm backend
+          sudo docker-compose rm -f backend
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
           sudo docker-compose up -d
 
