@@ -31,6 +31,29 @@
 * build_and_push_to_docker_hub - Сборка и доставка docker-образа для контейнера на Docker Hub.
 * deploy - Автоматический деплой проекта на удаленный сервер.
 * send_message - Отправка уведомления о статусе workflow в Telegram через бота.
+***- Для работы workflow:***
+Добавить переменные среды окружения в [Secrets GitHub Actions](https://github.com/<username>/yamdb_final/settings/secrets/actions)
+```
+- SECRET_KEY=<ключ> # Cекретный ключ Django проекта (https://djecrety.ir/)
+- ALLOWED_HOSTS=<'*'> # Разрешенные хосты/домены для которых работает Django проект (открыть доступ для всех - '*')
+- DB_ENGINE=django.db.backends.postgresql # Движок базы данных
+- DB_NAME=foodgram # Имя базы данных
+- POSTGRES_USER=<login> # Имя пользователя для базы данных
+- POSTGRES_PASSWORD=<password> # Пароль пользователя для базы данных
+- DB_HOST=db # Название сервиса
+- DB_PORT=5433 # Порт для подключения к базе данных
+- DOCKER_USERNAME=<login> # Логин на Docker Hub
+- DOCKER_PASSWORD=<password> # Пароль на Docker Hub
+- HOST=<IP> # IP-адрес удаленного сервера
+- USER=<login> # Логин на удаленном сервере
+- PASSPHRASE=<password> # Пароль защиты SSH ключа на удаленном сервере (если требуется)
+- SSH_KEY=<key> # Приватный ssh-ключ (публичный должен быть на сервере)
+- TELEGRAM_TO=<id> # ID своего telegram аккаунта (https://t.me/userinfobot)
+- TELEGRAM_TOKEN # Token telegram бота (https://t.me/BotFather, /token, имя бота)
+- TEST_DB=<True/False> # Булево значение для подключения базы данных SQLlite (True) вместо PostgreSQL (False)
+- DEBUG_MODE=<True/False> # Булево значение для включения режима отладки
+CSRF_TRUSTED_ORIGINS=<Host name> # HTTPS адрес вашего сервера (ex. https://foodmax.zapto.org)
+```
 
 ## Подготовка сервера:
 Войти на свой удаленный сервер, установить и запустить [Docker](https://docs.docker.com/engine/install/) и [Docker-compose](https://docs.docker.com/compose/install/):
@@ -74,7 +97,7 @@ DB_HOST=db
 DB_PORT=5433
 TEST_DB=False
 DEBUG_MODE=False
-CSRF_TRUSTED_ORIGINS=<Server DNS name or IP>
+CSRF_TRUSTED_ORIGINS=<Server DNS name or IP> (ex. https://foodmax.zapto.org/)
 ```
 
 ## Настройка и запуск приложения в контейнерах:
