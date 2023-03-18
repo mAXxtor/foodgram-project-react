@@ -13,6 +13,8 @@
 - Создавать, удалять и редактировать собственные рецепты
 - Скачивать список покупок
 
+Временно доступен по [адресу](http://foodmax.zapto.org/)
+
 ## Технологии
 [![foodgram_workflow](https://github.com/mAXxtor/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)](https://github.com/mAXxtor/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 [![python version](https://img.shields.io/badge/Python-3.11-green)](https://www.python.org/)
