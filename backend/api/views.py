@@ -97,9 +97,9 @@ class RecipeViewSet(ModelViewSet):
         shopping_list = ['Список покупок:']
         for ingredient in ingredients:
             shopping_list += (
-                f"\n{ingredient['ingredients__name']} - "
+                f"\n{ingredient['ingredient__name']} - "
                 f"{ingredient['amount']} "
-                f"{ingredient['ingredients__measurement_unit']}"
+                f"{ingredient['ingredient__measurement_unit']}"
             )
         shopping_list.append('\nFoodgram - продуктовый помощник ')
         file = 'shopping_list.txt'
@@ -115,10 +115,12 @@ class RecipeViewSet(ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """ Скачивает список покупок. """
+        if not request.user.carts.exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         ingredients = IngredientInRecipe.objects.filter(
             recipe__carts__user=request.user
-        ).order_by('ingredients__name').values(
-            'ingredients__name', 'ingredients__measurement_unit'
+        ).order_by('ingredient__name').values(
+            'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
         return self.get_shopping_list(ingredients)
 

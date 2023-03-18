@@ -280,8 +280,6 @@ class Cart(FavoriteCartAbstractModel):
         user(int):
             Пользователь.
             Связь ForeignKey с моделью User.
-        add_date(datetime):
-            Дата добавления в список покупок.
     """
     class Meta(FavoriteCartAbstractModel.Meta):
         verbose_name = 'Рецепт в списке покупок'
