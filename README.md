@@ -13,55 +13,133 @@
 - Создавать, удалять и редактировать собственные рецепты
 - Скачивать список покупок
 
-## Инструкции по установке
-***- Клонировать репозиторий:***
+## Технологии
+[![foodgram_workflow](https://github.com/mAXxtor/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)](https://github.com/mAXxtor/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
+[![python version](https://img.shields.io/badge/Python-3.11-green)](https://www.python.org/)
+[![django version](https://img.shields.io/badge/Django-4.1-green)](https://www.djangoproject.com/)
+![django rest framework version](https://img.shields.io/badge/Django%20REST%20Framework-3.14.0-green)
+[![PostgreSQL](https://img.shields.io/badge/PostgresSQL-13.0-green)](https://www.postgresql.org/)
+[![docker version](https://img.shields.io/badge/Docker-20.10-green)](https://www.docker.com/)
+[![docker-compose version](https://img.shields.io/badge/Docker--Compose-3.8-green)](https://www.docker.com/)
+[![nginx version](https://img.shields.io/badge/Nginx-%201.18-green)](https://nginx.org/ru/)
+[![docker hub](https://img.shields.io/badge/-Docker%20Hub-464646?style=flat&logo=Docker&logoColor=56C0C0&color=515151)](https://www.docker.com/products/docker-hub)
+[![github%20actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat&logo=GitHub%20actions&logoColor=56C0C0&color=515151)](https://github.com/features/actions)
+[![yandex.cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat&logo=Yandex.Cloud&logoColor=56C0C0&color=515151)](https://cloud.yandex.ru/)
+
+## Workflow:
+* tests - Проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8). Дальнейшие шаги выполнятся только если push был в ветку master или main.
+* build_and_push_to_docker_hub - Сборка и доставка docker-образа для контейнера на Docker Hub.
+* deploy - Автоматический деплой проекта на удаленный сервер.
+* send_message - Отправка уведомления о статусе workflow в Telegram через бота.
+
+## Подготовка сервера:
+Войти на свой удаленный сервер, установить и запустить [Docker](https://docs.docker.com/engine/install/) и [Docker-compose](https://docs.docker.com/compose/install/):
+```
+sudo apt install docker.io
+sudo apt install docker-compose
+sudo systemctl start docker
+```
+***- Для работы ssl сертификата установить certbot.***
+Поочередно выполнить команды:
+```
+sudo apt install snapd
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+***- Создать рабочую директорию проекта и скачать в нее скрипт:***
+```
+mkdir foodgram && cd foodgram/
+curl -L https://raw.githubusercontent.com/wmnnd/nginx-certbot/master/init-letsencrypt.sh > init-letsencrypt.sh
+```
+***- Отредактировать и запустить скрипт:***
+ Добавить домен в переменную domains и действующую электронную почту в переменную email:
+```
+nano init-letsencrypt.sh
+```
+Добавляем разрешения на запуск скрипта и запускаем его:
+```
+chmod +x init-letsencrypt.sh
+sudo ./init-letsencrypt.sh
+```
+***- Cоздать и заполнить .env файл с переменными окружения в рабочей директории:***
+```
+ALLOWED_HOSTS=*
+SECRET_KEY=5a&%1y_a6-odm+s=1wl_-8lyh%3ldtz7q=!@egrc9i&jza9$98
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=foodgram
+POSTGRES_USER=foodgram
+POSTGRES_PASSWORD=1105
+DB_HOST=db
+DB_PORT=5433
+TEST_DB=False
+DEBUG_MODE=False
+```
+
+## Настройка и запуск приложения в контейнерах:
+***- Клонировать репозиторий на локальный пк:***
 ```
 git clone https://github.com/mAXxtor/foodgram-project-react.git
 ```
+***- Скопировать файлы из директории infra/ на сервер:***
 ```
-cd foodgram-project-react
+cd foodgram-project-react/infra
+scp ./docker-compose.yml <username>@<host>:/home/<username>/foodgram/
+scp ./nginx.conf <username>@<host>:/home/<username>/foodgram/default.conf
 ```
-
-***- Создать и активировать виртуальное окружение:***
-- для MacOS
+***- Развернуть контейнеры на удаленном сервере:***
+Развернуть контейнеры через терминал на удаленном сервере:
 ```
-python3 -m venv venv
-source venv/bin/activate
+sudo docker-compose up -d --build
 ```
-- для Windows
+***- Выполнить в контейнере backend миграции:***
 ```
-python -m venv venv
-source venv/Scripts/activate
+sudo docker-compose exec backend python manage.py migrate
 ```
-
-***- Установить зависимости из файла requirements.txt:***
+***- Создать суперпользователя:***
 ```
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+sudo docker-compose exec backend python manage.py createsuperuser
 ```
-
-***- Cоздать и заполнить .env файл с переменными окружения в папке проекта:***
+***- Собрать статику в volume static_value:***
 ```
-cd backend
+sudo docker-compose exec backend python manage.py collectstatic --no-input
 ```
+***- Загрузить тестовые значения в базу данных:***
 ```
-ALLOWED_HOSTS=*
-SECRET_KEY=5(&%1y_a6-odm+s=1wl_-8lyh%3ldtz7q=!@egrc9i&jz)9$98
-TEST_DB=True
+sudo docker-compose exec backend python manage.py load_test_data
 ```
 
-***- Выполнить миграции:***
+### Endpoints:
 ```
-python manage.py migrate
+POST /api/users/ - регистрация
+POST /api/auth/token/login - создание токена
+POST /api/auth/token/logout/ - удаление токена
+GET /api/users/ - просмотр информации о пользователях
+
+POST /api/users/set_password/ - изменение пароля
+GET /api/users/{id}/subscribe/ - подписаться на пользователя
+DEL /api/users/{id}/subscribe/ - отписаться от пользователя
+
+POST /api/recipes/ - создать рецепт
+GET /api/recipes/ - получить рецепты
+GET /api/recipes/{id}/ - получить рецепт по id
+DEL /api/recipes/{id}/ - удалить рецепт по id
+
+GET /api/recipes/{id}/favorite/ - добавить рецепт в избранное
+DEL /api/recipes/{id}/favorite/ - удалить рецепт из избранного
+
+GET /api/users/{id}/subscribe/ - подписаться на пользователя
+DEL /api/users/{id}/subscribe/ - отписаться от пользователя
+
+GET /api/ingredients/ - получить список всех ингредиентов
+
+GET /api/tags/ - получить список всех тегов
+
+GET /api/recipes/{id}/shopping_cart/ - добавить рецепт в корзину
+DEL /api/recipes/{id}/shopping_cart/ - удалить рецепт из корзины
 ```
 
-***- Запустить локальный сервер:***
-```
-python manage.py runserver
-```
-
-### Примеры запросов:
-
+### Примеры запросов к API:
 **`POST` | Создание рецепта: `http://127.0.0.1:8000/api/recipes/`**
 
 Request:
