@@ -59,6 +59,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
+          set -m
           cd foodgram
           rm -f .env
           touch .env
