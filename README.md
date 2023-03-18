@@ -53,11 +53,11 @@ mkdir foodgram && cd foodgram/
 curl -L https://raw.githubusercontent.com/wmnnd/nginx-certbot/master/init-letsencrypt.sh > init-letsencrypt.sh
 ```
 ***- Отредактировать и запустить скрипт:***
- Добавить домен в переменную domains и действующую электронную почту в переменную email:
+Добавить домен в переменную domains и действующую электронную почту в переменную email:
 ```
 nano init-letsencrypt.sh
 ```
-Добавляем разрешения на запуск скрипта и запускаем его:
+Добавить разрешения на запуск скрипта и запустить его:
 ```
 chmod +x init-letsencrypt.sh
 sudo ./init-letsencrypt.sh
@@ -74,6 +74,7 @@ DB_HOST=db
 DB_PORT=5433
 TEST_DB=False
 DEBUG_MODE=False
+CSRF_TRUSTED_ORIGINS=<Server DNS name or IP>
 ```
 
 ## Настройка и запуск приложения в контейнерах:

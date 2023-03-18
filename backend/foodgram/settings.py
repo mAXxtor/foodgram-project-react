@@ -15,6 +15,8 @@ DEBUG = os.getenv('DEBUG_MODE', 'FALSE').upper() == 'TRUE'
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
+CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGINS', default='http://localhost')]
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 INSTALLED_APPS = [
