@@ -19,7 +19,6 @@ services:
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
-      - redoc:/app/api/docs/
     depends_on:
       - db
     env_file:
@@ -39,7 +38,6 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - redoc:/usr/share/nginx/html/api/docs/
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
       - ../frontend/build:/usr/share/nginx/html/
@@ -65,4 +63,3 @@ volumes:
   static_value:
   media_value:
   db_value:
-  redoc:
