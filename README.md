@@ -90,7 +90,7 @@ sudo ./init-letsencrypt.sh
 ***- Cоздать и заполнить .env файл с переменными окружения в рабочей директории:***
 ```
 ALLOWED_HOSTS=*
-SECRET_KEY=5a&%1y_a6-odm+s=1wl_-8lyh%3ldtz7q=!@egrc9i&jza9$98
+SECRET_KEY=5a!%1y_a6-odm+s=1wl_-8lyh%3ldtz7q=!@egrc9i&jza9!98
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=foodgram
 POSTGRES_USER=foodgram
